@@ -56,7 +56,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OGNFlightLogClient\OGN.FlightLog.Client.csproj">
+    <ProjectReference Include="..\OGN.FlightLog.Client\OGN.FlightLog.Client.csproj">
       <Project>{cffa9532-db5c-4a17-ac89-8f80628a1268}</Project>
       <Name>OGN.FlightLog.Client</Name>
     </ProjectReference>
