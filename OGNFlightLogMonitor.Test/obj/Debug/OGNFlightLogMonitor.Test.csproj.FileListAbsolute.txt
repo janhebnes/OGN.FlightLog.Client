@@ -1,0 +1,1 @@
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor.Test\obj\Debug\OGNFlightLogMonitor.Test.csprojResolveAssemblyReference.cache

@@ -1,0 +1,11 @@
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor.Test\obj\Debug\OGNFlightLogMonitor.Test.dll
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor.Test\obj\Debug\OGNFlightLogMonitor.Test.pdb
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor.Test\bin\Debug\OGNFlightLogMonitor.Test.dll
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor.Test\bin\Debug\OGNFlightLogMonitor.Test.pdb
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor.Test\bin\Debug\OGNFlightLogClient.dll
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor.Test\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor.Test\bin\Debug\EntityFramework.dll
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor.Test\bin\Debug\OGNFlightLogClient.pdb
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor.Test\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor.Test\bin\Debug\EntityFramework.xml
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor.Test\obj\Debug\OGNFlightLogClient.Tests.csprojResolveAssemblyReference.cache

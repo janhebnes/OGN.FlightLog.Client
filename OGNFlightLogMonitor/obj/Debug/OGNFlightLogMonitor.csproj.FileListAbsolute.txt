@@ -1,0 +1,12 @@
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor\bin\Debug\OGNFlightLogMonitor.dll.config
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor\bin\Debug\OGNFlightLogMonitor.dll
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor\bin\Debug\OGNFlightLogMonitor.pdb
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor\bin\Debug\EntityFramework.dll
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor\bin\Debug\EntityFramework.xml
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor\obj\Debug\OGNFlightLogMonitor.csprojResolveAssemblyReference.cache
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor\obj\Debug\OGNFlightLogMonitor.dll
+C:\Users\Jan\Workshop\GitHub\OGN-FlightLog-Monitor\OGNFlightLogMonitor\obj\Debug\OGNFlightLogMonitor.pdb
