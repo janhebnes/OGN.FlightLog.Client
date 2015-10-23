@@ -6,8 +6,8 @@
     <ProjectGuid>{6B6DFAFB-1E20-4313-A621-0D54A315CE77}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OGNFlightLogMonitor.Test</RootNamespace>
-    <AssemblyName>OGNFlightLogMonitor.Test</AssemblyName>
+    <RootNamespace>OGN.FlightLog.Client.Test</RootNamespace>
+    <AssemblyName>OGN.FlightLog.Client.Test</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -56,9 +56,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OGNFlightLogClient\OGNFlightLogClient.csproj">
+    <ProjectReference Include="..\OGNFlightLogClient\OGN.FlightLog.Client.csproj">
       <Project>{cffa9532-db5c-4a17-ac89-8f80628a1268}</Project>
-      <Name>OGNFlightLogClient</Name>
+      <Name>OGN.FlightLog.Client</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

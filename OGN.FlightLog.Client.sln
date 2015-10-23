@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OGNFlightLogClient", "OGNFlightLogClient\OGNFlightLogClient.csproj", "{CFFA9532-DB5C-4A17-AC89-8F80628A1268}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OGN.FlightLog.Client", "OGNFlightLogClient\OGN.FlightLog.Client.csproj", "{CFFA9532-DB5C-4A17-AC89-8F80628A1268}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OGNFlightLogClient.Tests", "OGNFlightLogClient.Test\OGNFlightLogClient.Tests.csproj", "{6B6DFAFB-1E20-4313-A621-0D54A315CE77}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OGN.FlightLog.Client.Tests", "OGNFlightLogClient.Test\OGN.FlightLog.Client.Tests.csproj", "{6B6DFAFB-1E20-4313-A621-0D54A315CE77}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

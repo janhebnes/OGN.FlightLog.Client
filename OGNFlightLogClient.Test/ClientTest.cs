@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace OGNFlightLogClient.Test
+namespace OGN.FlightLog.Client.Test
 {
     [TestClass]
     public class OGNFlightLogClientTest

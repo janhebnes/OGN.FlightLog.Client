@@ -5,22 +5,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity;
 
-namespace OGNFlightLogClient.Models
+namespace OGN.FlightLog.Client.Models
 {
-    public class OGNFlightLogContext : DbContext
+    public class FlightLogContext : DbContext
     {
-        public OGNFlightLogContext() : base("OGNFlightLog")
+        public FlightLogContext() : base("OGNFlightLog")
         {
         }
 
-        static OGNFlightLogContext()
+        static FlightLogContext()
         {
             //Database.SetInitializer<OGNFlightLogContext>(new MigrateDatabaseToLatestVersion<OGNFlightLogContext, Migrations.OGNFlightLogContext.Configuration>());
         }
 
-        public static OGNFlightLogContext Create()
+        public static FlightLogContext Create()
         {
-            return new OGNFlightLogContext();
+            return new FlightLogContext();
         }
 
         public DbSet<Flight> Flights { get; set; }

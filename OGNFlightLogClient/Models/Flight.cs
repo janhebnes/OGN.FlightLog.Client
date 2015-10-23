@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
-namespace OGNFlightLogClient.Models
+namespace OGN.FlightLog.Client.Models
 {
     public class Flight
     {

@@ -1,4 +1,4 @@
-﻿namespace OGNFlightLogClient
+﻿namespace OGN.FlightLog.Client
 {
     using System;
     using System.Collections.Generic;
