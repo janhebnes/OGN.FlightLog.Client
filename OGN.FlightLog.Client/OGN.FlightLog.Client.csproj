@@ -56,7 +56,7 @@
   <ItemGroup>
     <Compile Include="Client.cs" />
     <Compile Include="Models\Flight.cs" />
-    <Compile Include="Models\OGNFlightLogContext.cs" />
+    <Compile Include="Models\FlightLogContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
