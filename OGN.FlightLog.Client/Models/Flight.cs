@@ -10,8 +10,15 @@ namespace OGN.FlightLog.Client.Models
 {
     public class Flight
     {
-        public Flight(Client.Options options, JObject jo)
+        public Flight(Client.Options options, int row)
         {
+            // E.g. "EHDL30052015QFEz2m"
+            this.dataset = options.GetDatasetIdentifier();
+            this.row = row;
+
+            // Flight id based on parameters + row in json datasource e.g. "EHDL30052015QFEz2m" + "1"
+            this.id = this.dataset + this.row.ToString();
+
             // FROM options
             //   "date": "30052015",
             //   "airfield": "EHDL",
@@ -22,7 +29,10 @@ namespace OGN.FlightLog.Client.Models
             this.alt_setting = options.Alt_settingParameter;
             this.unit = options.UnitParameter;
             this.timezone = options.TimeZoneParameter;
+        }
 
+        public Flight(Client.Options options, int row, JObject jo) : this(options, row)
+        {
             // FROM JObject
             //   "plane": "",
             //   "glider": "6fb4f001",
@@ -80,7 +90,12 @@ namespace OGN.FlightLog.Client.Models
             }
         }
 
-        public Guid FlightId { get; set; }
+        internal string dataset { get; set; }
+        internal int row { get; set; }
+
+        [Key]
+        internal string id { get; set; }
+        
         [DataType(DataType.Date)]
         public DateTime Date { get; set; }
         public string airfield { get; set; }

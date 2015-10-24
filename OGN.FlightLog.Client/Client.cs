@@ -9,6 +9,11 @@
     
     public class Client
     {
+        public class InvalidAirportException : ArgumentException
+        {
+            public InvalidAirportException(string message, string paramName): base(message, paramName) { }
+        }
+
         public class Options
         {
             public Options(string airfield) 
@@ -39,6 +44,15 @@
             public override string ToString()
             {
                 return $"http://live.glidernet.org/flightlog/index.php?a={AirfieldParameter}&s={Alt_settingParameter}&u={UnitParameter}&z={TimeZoneParameter}&p=&d={DateParameter}&j";
+            }
+
+            /// <summary>
+            /// Generates a unique identifier for the current options
+            /// </summary>
+            /// <returns></returns>
+            public string GetDatasetIdentifier()
+            {
+                return this.Airfield + this.DateParameter + this.Alt_settingParameter + "z" + this.TimeZoneParameter + this.UnitParameter;
             }
 
             public DateTime Date = DateTime.Today;
@@ -107,6 +121,37 @@
         }
 
         /// <summary>
+        /// We are getting the results live from from http://live.glidernet.org/flightlog/index.php?a=EHDL&s=QFE&u=M&z=2&p=&d=30052015&j 
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// JSON Parsing is done with Newtonsoft.Json with the same approach as described on this post
+        /// http://stackoverflow.com/questions/32401704/appending-json-data-to-listview-c-sharp
+        /// </remarks>
+        internal static List<Flight> GetLiveFlights(Options options)
+        {
+            var result = new List<Flight>();
+
+            WebClient client = new WebClient();
+            string json = client.DownloadString(options.ToString());
+            if (json.StartsWith("<HTML>"))
+            {
+                throw new InvalidAirportException("Unable to retrieve feed information for airport " + options.Airfield + " at " + options.ToString(), "Airfield");
+            }
+
+            JObject data = JObject.Parse(json);
+            int row = 0;
+            var items = data["flights"]
+                .Children<JObject>()
+                .Select(jo => new Flight(options, row++, jo));
+
+            result.AddRange(items);
+
+            return result;
+        }
+
+        /// <summary>
         /// Fetch the flight information based
         /// </summary>
         /// <param name="date"></param>
@@ -131,38 +176,32 @@
             if (!enableLocalDbCache)
                 return GetLiveFlights(options);
 
-            return null;
+            // if request is for todays information get directly from source (TODO: update day results with delta)
+            if (options.Date == DateTime.Now.Date)
+                return GetLiveFlights(options);
 
-            // TODO: Do we create a new Db Context for Ogn log data .. ?<s
-            //  app.CreatePerOwinContext(ApplicationDbContext.Create);
-            //  context.Get<ApplicationDbContext>() that allows for a single instance to be used all over... 
-        }
+            // if request has records in database return results. 
+            var flights = FlightLogContext.Instance.Flights.Where(f => f.dataset == options.GetDatasetIdentifier());
+            if (flights.Any())
+            {
+                if (flights.Any(f => f.row < 0)) // days with zero flights are stored with one flight with row -1;
+                    return new List<Flight>();
 
-        /// <summary>
-        /// We are getting the results live from from http://live.glidernet.org/flightlog/index.php?a=EHDL&s=QFE&u=M&z=2&p=&d=30052015&j 
-        /// </summary>
-        /// <param name="options"></param>
-        /// <returns></returns>
-        /// <remarks>
-        /// JSON Parsing is done with Newtonsoft.Json with the same approach as described on this post
-        /// http://stackoverflow.com/questions/32401704/appending-json-data-to-listview-c-sharp
-        /// </remarks>
-        internal static List<Flight> GetLiveFlights(Options options)
-        {
-            var result = new List<Flight>();
-            
-            WebClient client = new WebClient();
-            string json = client.DownloadString(options.ToString());
-            JObject data = JObject.Parse(json);
+                return flights.ToList();
+            }
 
-            var items = data["flights"]
-                .Children<JObject>()
-                .Select(jo => new Flight(options, jo));
+            // if request does not have records in database get directly from source and save results 
+            var result = GetLiveFlights(options);
+            if (!result.Any())
+            {
+                // Store the day as having zero flights with an empty flight at row -1 
+                result.Add(new Flight(options, -1));
+            }
 
-            result.AddRange(items);
-            
+            FlightLogContext.Instance.Flights.AddRange(result);
             return result;
         }
+
 
     }
 }

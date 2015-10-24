@@ -7,6 +7,14 @@ namespace OGN.FlightLog.Client.Test
     public class OGNFlightLogClientTest
     {
         [TestMethod]
+        public void StaticClientStoredRequest()
+        {
+            var options = new Client.Options("EHDL", new DateTime(2015, 05, 30));
+            var flights = Client.GetFlights(options);
+            Assert.IsTrue(flights.Count == 20);
+        }
+
+        [TestMethod]
         public void StaticClientLiveRequest()
         {
             var options = new Client.Options("EHDL", new DateTime(2015, 05, 30));
@@ -26,6 +34,22 @@ namespace OGN.FlightLog.Client.Test
 
             flights = client.GetFlights(new DateTime(2015, 05, 30), false);
             Assert.IsTrue(flights.Count == 20);
+        }
+
+        [TestMethod]
+        public void StaticClientLiveInvalidAirportRequest()
+        {
+            try
+            {
+                var options = new Client.Options("EKKS", new DateTime(2015, 05, 30));
+                var flights = Client.GetFlights(options, false);
+                Assert.IsTrue(flights.Count == 20);
+            }
+            catch (Client.InvalidAirportException iae)
+            {
+                Assert.IsNotNull(iae);
+            }
+            
         }
     }
 }
