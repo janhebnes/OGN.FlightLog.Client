@@ -39,7 +39,7 @@ namespace OGN.FlightLog.Client.Models
 
         static FlightLogContext()
         {
-            //Database.SetInitializer<OGNFlightLogContext>(new MigrateDatabaseToLatestVersion<OGNFlightLogContext, Migrations.OGNFlightLogContext.Configuration>());
+            Database.SetInitializer<FlightLogContext>(new MigrateDatabaseToLatestVersion<FlightLogContext, Migrations.FlightLogContext.Configuration>());
         }
 
         public static FlightLogContext Create()
