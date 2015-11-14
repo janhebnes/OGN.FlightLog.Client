@@ -181,7 +181,8 @@
                 return GetLiveFlights(options);
 
             // if request has records in database return results. 
-            var flights = FlightLogContext.Instance.Flights.Where(f => f.dataset == options.GetDatasetIdentifier());
+            var datasetIdentifier = options.GetDatasetIdentifier();
+            var flights = FlightLogContext.Instance.Flights.Where(f => f.dataset == datasetIdentifier);
             if (flights.Any())
             {
                 if (flights.Any(f => f.row < 0)) // days with zero flights are stored with one flight with row -1;
@@ -194,11 +195,12 @@
             var result = GetLiveFlights(options);
             if (!result.Any())
             {
-                // Store the day as having zero flights with an empty flight at row -1 
+                // Store the day as having zero flights with an empty flight at row -1 (meaning we do not spam the webservice for zero flight days)
                 result.Add(new Flight(options, -1));
             }
 
             FlightLogContext.Instance.Flights.AddRange(result);
+            FlightLogContext.Instance.SaveChanges();
             return result;
         }
 

@@ -1,11 +1,18 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace OGN.FlightLog.Client.Test
 {
     [TestClass]
     public class OGNFlightLogClientTest
     {
+        [TestInitialize]
+        public void init()
+        {
+            AppDomain.CurrentDomain.SetData("DataDirectory", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ""));
+        }
+
         [TestMethod]
         public void StaticClientStoredRequest()
         {
@@ -19,7 +26,8 @@ namespace OGN.FlightLog.Client.Test
         {
             var options = new Client.Options("EHDL", new DateTime(2015, 05, 30));
             var flights = Client.GetFlights(options);
-            Assert.IsNull(flights);
+            Assert.IsNotNull(flights);
+            Assert.IsTrue(flights.Count == 20);
 
             flights = Client.GetFlights(options, false);
             Assert.IsTrue(flights.Count == 20);
@@ -30,7 +38,8 @@ namespace OGN.FlightLog.Client.Test
         {
             var client = new Client("EHDL", 2);
             var flights = client.GetFlights(new DateTime(2015, 05, 30));
-            Assert.IsNull(flights);
+            Assert.IsNotNull(flights);
+            Assert.IsTrue(flights.Count == 20);
 
             flights = client.GetFlights(new DateTime(2015, 05, 30), false);
             Assert.IsTrue(flights.Count == 20);
@@ -43,7 +52,7 @@ namespace OGN.FlightLog.Client.Test
             {
                 var options = new Client.Options("EKKS", new DateTime(2015, 05, 30));
                 var flights = Client.GetFlights(options, false);
-                Assert.IsTrue(flights.Count == 20);
+                Assert.Fail();
             }
             catch (Client.InvalidAirportException iae)
             {

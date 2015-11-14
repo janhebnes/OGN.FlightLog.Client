@@ -10,6 +10,11 @@ namespace OGN.FlightLog.Client.Models
 {
     public class Flight
     {
+        public Flight()
+        {
+            // Used only when entity framework initializes objects
+        }
+
         public Flight(Client.Options options, int row)
         {
             // E.g. "EHDL30052015QFEz2m"
@@ -17,7 +22,7 @@ namespace OGN.FlightLog.Client.Models
             this.row = row;
 
             // Flight id based on parameters + row in json datasource e.g. "EHDL30052015QFEz2m" + "1"
-            this.id = this.dataset + this.row.ToString();
+            this.ID = this.dataset + this.row.ToString();
 
             // FROM options
             //   "date": "30052015",
@@ -90,11 +95,11 @@ namespace OGN.FlightLog.Client.Models
             }
         }
 
-        internal string dataset { get; set; }
-        internal int row { get; set; }
+        public string dataset { get; set; }
+        public int row { get; set; }
 
         [Key]
-        internal string id { get; set; }
+        public string ID { get; set; }
         
         [DataType(DataType.Date)]
         public DateTime Date { get; set; }
