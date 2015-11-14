@@ -176,14 +176,31 @@
             if (!enableLocalDbCache)
                 return GetLiveFlights(options);
 
-            // if request is for todays information get directly from source (TODO: update day results with delta)
-            if (options.Date == DateTime.Now.Date)
-                return GetLiveFlights(options);
-
-            // if request has records in database return results. 
-            var datasetIdentifier = options.GetDatasetIdentifier();
             using (var db = new FlightLogContext())
             {
+                var datasetIdentifier = options.GetDatasetIdentifier();
+
+                // if request is for todays information get directly from source (TODO: update day results with delta)
+                if (options.Date == DateTime.Now.Date)
+                {
+                    return GetLiveFlights(options);
+
+                    // TODO: implement change tracking
+
+                    //var liveFlights = GetLiveFlights(options);
+                    //var savedFlights = db.Flights.Where(f => f.dataset == datasetIdentifier);
+                    //db.Flights.AddRange(liveFlights);
+                    //db.SaveChanges();
+
+                    /// Change tracking can be implemented by monitoring .ChangeTracker on the db context
+                    //////this.ChangeTracker.Entries<Flight>().Where(f => (f.State == EntityState.Added) || (f.State == EntityState.Deleted) || (f.State == EntityState.Modified))
+                    //////.ToList<DbEntityEntry<Flight>>()
+                    //////.ForEach((c => this.FlightVersions.Add(new FlightVersionHistory((Flight)c.Entity, c.State))));
+
+                    //return liveFlights; // and change trackings?
+                }
+
+                // if request has records in database return results. 
                 var flights = db.Flights.Where(f => f.dataset == datasetIdentifier);
                 if (flights.Any())
                 {
