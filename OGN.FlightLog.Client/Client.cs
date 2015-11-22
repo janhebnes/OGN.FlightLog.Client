@@ -6,22 +6,22 @@
     using Models;
     using System.Net;
     using Newtonsoft.Json.Linq;
-    
+
     public class Client
     {
         public class InvalidAirportException : ArgumentException
         {
-            public InvalidAirportException(string message, string paramName): base(message, paramName) { }
+            public InvalidAirportException(string message, string paramName) : base(message, paramName) { }
         }
 
         public class Options
         {
-            public Options(string airfield) 
+            public Options(string airfield)
             {
                 this.Airfield = airfield;
                 this.TimeZone = Convert.ToInt32(TimeZoneInfo.Local.BaseUtcOffset.TotalHours);
             }
-            
+
             public Options(string airfield, int timeZone)
             {
                 this.Airfield = airfield;
@@ -121,6 +121,72 @@
         }
 
         /// <summary>
+        /// Fetch the flight information based
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="enableLocalDbCache">if local db cache is enabled flights that have been cached and that are not from today are fetch from the local database</param>
+        /// <returns></returns>
+        public List<Flight> GetFlights(DateTime date, bool enableLocalDbCache = true)
+        {
+            options.Date = date;
+
+            // Passes the request along to the static counterpart
+            return GetFlights(options, enableLocalDbCache);
+        }
+
+        /// <summary>
+        /// Optionaly you can use the static directly 
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="useLocalDatabaseCache"></param>
+        /// <returns></returns>
+        public static List<Flight> GetFlights(Options options, bool useLocalDatabaseCache = true)
+        {
+            if (!useLocalDatabaseCache)
+                return GetLiveFlights(options);
+
+            if (options.Date == DateTime.Now.Date)
+                return GetChangeTrackedFlights(options, GetLiveFlights(options));
+
+            using (var db = new FlightLogContext())
+            {
+                var datasetIdentifier = options.GetDatasetIdentifier();
+                var flights = db.Flights.Where(f => f.dataset == datasetIdentifier);
+                if (flights.Any())
+                {
+                    if (flights.Any(ZeroFlightDayMarker)) 
+                        return new List<Flight>();
+
+                    return flights.ToList();
+                }
+
+                var result = GetLiveFlights(options);
+                if (!result.Any())
+                {
+                    result.Add(ZeroFlightDayMarker(options));
+                }
+
+                db.Flights.AddRange(result);
+                db.SaveChanges();
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Days with zero flights are stored with one flight with row -1;
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        internal static bool ZeroFlightDayMarker(Flight f) => f.row == -1;
+
+        /// <summary>
+        /// A zero flight marker with row -1 (for avoiding calling the live webservice on zero flight days)
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        internal static Flight ZeroFlightDayMarker(Options options) => new Flight(options, -1);
+
+        /// <summary>
         /// We are getting the results live from from http://live.glidernet.org/flightlog/index.php?a=EHDL&s=QFE&u=M&z=2&p=&d=30052015&j 
         /// </summary>
         /// <param name="options"></param>
@@ -152,79 +218,27 @@
         }
 
         /// <summary>
-        /// Fetch the flight information based
-        /// </summary>
-        /// <param name="date"></param>
-        /// <param name="enableLocalDbCache">if local db cache is enabled flights that have been cached and that are not from today are fetch from the local database</param>
-        /// <returns></returns>
-        public List<Flight> GetFlights(DateTime date, bool enableLocalDbCache = true)
-        {
-            options.Date = date;
-
-            // Passes the request along to the static counterpart
-            return GetFlights(options, enableLocalDbCache);
-        }
-
-        /// <summary>
-        /// Optionaly you can use the static directly 
+        /// update database store and add ChangeTracked state information to the returned flight information
         /// </summary>
         /// <param name="options"></param>
-        /// <param name="enableLocalDbCache"></param>
         /// <returns></returns>
-        public static List<Flight> GetFlights(Options options, bool enableLocalDbCache = true)
+        /// <remarks>Change tracking is implemented by monitoring .ChangeTracker on the db context</remarks>
+        public static List<Flight> GetChangeTrackedFlights(Options options, List<Flight> flights)
         {
-            if (!enableLocalDbCache)
-                return GetLiveFlights(options);
+            var liveFlights = GetLiveFlights(options);
+            return liveFlights;
+            //var savedFlights = db.Flights.Where(f => f.dataset == datasetIdentifier);
+            //db.Flights.AddRange(liveFlights);
+            //db.SaveChanges();
 
-            using (var db = new FlightLogContext())
-            {
-                var datasetIdentifier = options.GetDatasetIdentifier();
 
-                // if request is for todays information get directly from source (TODO: update day results with delta)
-                if (options.Date == DateTime.Now.Date)
-                {
-                    return GetLiveFlights(options);
 
-                    // TODO: implement change tracking
+            //////this.ChangeTracker.Entries<Flight>().Where(f => (f.State == EntityState.Added) || (f.State == EntityState.Deleted) || (f.State == EntityState.Modified))
+            //////.ToList<DbEntityEntry<Flight>>()
+            //////.ForEach((c => this.FlightVersions.Add(new FlightVersionHistory((Flight)c.Entity, c.State))));
 
-                    //var liveFlights = GetLiveFlights(options);
-                    //var savedFlights = db.Flights.Where(f => f.dataset == datasetIdentifier);
-                    //db.Flights.AddRange(liveFlights);
-                    //db.SaveChanges();
-
-                    /// Change tracking can be implemented by monitoring .ChangeTracker on the db context
-                    //////this.ChangeTracker.Entries<Flight>().Where(f => (f.State == EntityState.Added) || (f.State == EntityState.Deleted) || (f.State == EntityState.Modified))
-                    //////.ToList<DbEntityEntry<Flight>>()
-                    //////.ForEach((c => this.FlightVersions.Add(new FlightVersionHistory((Flight)c.Entity, c.State))));
-
-                    //return liveFlights; // and change trackings?
-                }
-
-                // if request has records in database return results. 
-                var flights = db.Flights.Where(f => f.dataset == datasetIdentifier);
-                if (flights.Any())
-                {
-                    if (flights.Any(f => f.row < 0)) // days with zero flights are stored with one flight with row -1;
-                        return new List<Flight>();
-
-                    return flights.ToList();
-                }
-
-                // if request does not have records in database get directly from source and save results 
-                var result = GetLiveFlights(options);
-                if (!result.Any())
-                {
-                    // Store the day as having zero flights with an empty flight at row -1 (meaning we do not spam the webservice for zero flight days)
-                    result.Add(new Flight(options, -1));
-                }
-
-                db.Flights.AddRange(result);
-                db.SaveChanges();
-                return result;
-            }
-
+            //return liveFlights; // and change trackings?
         }
-
 
     }
 }

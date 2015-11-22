@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
 namespace OGN.FlightLog.Client.Models
@@ -13,6 +9,7 @@ namespace OGN.FlightLog.Client.Models
         public Flight()
         {
             // Used only when entity framework initializes objects
+            State = EntityState.Unchanged;
         }
 
         public Flight(Client.Options options, int row)
@@ -115,5 +112,8 @@ namespace OGN.FlightLog.Client.Models
         public TimeSpan? plane_time { get; set; }
         public TimeSpan? glider_time { get; set; }
         public string towplane_max_alt { get; set; }
+
+        [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+        public EntityState State { get; set; }
     }
 }
