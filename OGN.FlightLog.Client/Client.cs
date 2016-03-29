@@ -146,7 +146,7 @@
                 return GetLiveFlights(options);
 
             if (options.Date == DateTime.Now.Date)
-                return GetChangeTrackedFlights(options, GetLiveFlights(options));
+                return GetLiveFlights(options); //GetChangeTrackedFlights(options, GetLiveFlights(options));
 
             using (var db = new FlightLogContext())
             {
@@ -217,28 +217,29 @@
             return result;
         }
 
-        /// <summary>
-        /// update database store and add ChangeTracked state information to the returned flight information
-        /// </summary>
-        /// <param name="options"></param>
-        /// <returns></returns>
-        /// <remarks>Change tracking is implemented by monitoring .ChangeTracker on the db context</remarks>
-        public static List<Flight> GetChangeTrackedFlights(Options options, List<Flight> flights)
-        {
-            var liveFlights = GetLiveFlights(options);
-            return liveFlights;
-            //var savedFlights = db.Flights.Where(f => f.dataset == datasetIdentifier);
-            //db.Flights.AddRange(liveFlights);
-            //db.SaveChanges();
+        #region sync feature is put on ice
+        /////// <summary>
+        /////// update database store and add ChangeTracked state information to the returned flight information
+        /////// </summary>
+        /////// <param name="options"></param>
+        /////// <returns></returns>
+        /////// <remarks>Change tracking is implemented by monitoring .ChangeTracker on the db context</remarks>
+        ////public static List<Flight> GetChangeTrackedFlights(Options options, List<Flight> flights)
+        ////{
+        ////    var liveFlights = GetLiveFlights(options);
+        ////    return liveFlights;
+        ////    //var savedFlights = db.Flights.Where(f => f.dataset == datasetIdentifier);
+        ////    //db.Flights.AddRange(liveFlights);
+        ////    //db.SaveChanges();
 
 
 
-            //////this.ChangeTracker.Entries<Flight>().Where(f => (f.State == EntityState.Added) || (f.State == EntityState.Deleted) || (f.State == EntityState.Modified))
-            //////.ToList<DbEntityEntry<Flight>>()
-            //////.ForEach((c => this.FlightVersions.Add(new FlightVersionHistory((Flight)c.Entity, c.State))));
+        ////    //////this.ChangeTracker.Entries<Flight>().Where(f => (f.State == EntityState.Added) || (f.State == EntityState.Deleted) || (f.State == EntityState.Modified))
+        ////    //////.ToList<DbEntityEntry<Flight>>()
+        ////    //////.ForEach((c => this.FlightVersions.Add(new FlightVersionHistory((Flight)c.Entity, c.State))));
 
-            //return liveFlights; // and change trackings?
-        }
-
+        ////    //return liveFlights; // and change trackings?
+        ////}
+        #endregion
     }
 }

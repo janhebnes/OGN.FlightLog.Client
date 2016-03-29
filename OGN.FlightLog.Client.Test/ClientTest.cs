@@ -62,54 +62,56 @@ namespace OGN.FlightLog.Client.Tests
             }
         }
 
-        [TestMethod]
-        public void GetChangeTrackedFlightsTest_unchanged_added_modified_deleted_state()
-        {
-            var options = new Client.Options("EHDL", new DateTime(2015, 05, 30));
-            var flights = Client.GetFlights(options);
-            Assert.IsNotNull(flights);
-            Assert.IsTrue(flights.Count == 20);
+        #region sync feature is put on ice
+        ////[TestMethod]
+        ////public void GetChangeTrackedFlightsTest_unchanged_added_modified_deleted_state()
+        ////{
+        ////    var options = new Client.Options("EHDL", new DateTime(2015, 05, 30));
+        ////    var flights = Client.GetFlights(options);
+        ////    Assert.IsNotNull(flights);
+        ////    Assert.IsTrue(flights.Count == 20);
 
-            var UnchangedFlights = flights.Exists(f => f.State != Models.EntityState.Unchanged);
-            Assert.IsTrue(UnchangedFlights);
+        ////    var UnchangedFlights = flights.Exists(f => f.State != Models.EntityState.Unchanged);
+        ////    Assert.IsTrue(UnchangedFlights);
 
-            // ADD
-            flights.Add(new Models.Flight(options, 999));
+        ////    // ADD
+        ////    flights.Add(new Models.Flight(options, 999));
 
-            var changeTrackedflights = Client.GetChangeTrackedFlights(options, flights);
-            Assert.IsNotNull(changeTrackedflights);
-            Assert.IsTrue(changeTrackedflights.Count == 21);
+        ////    var changeTrackedflights = Client.GetChangeTrackedFlights(options, flights);
+        ////    Assert.IsNotNull(changeTrackedflights);
+        ////    Assert.IsTrue(changeTrackedflights.Count == 21);
 
-            var AddedFlightCount = changeTrackedflights.Count(f => f.State == Models.EntityState.Added);
-            Assert.IsTrue(AddedFlightCount == 1);
+        ////    var AddedFlightCount = changeTrackedflights.Count(f => f.State == Models.EntityState.Added);
+        ////    Assert.IsTrue(AddedFlightCount == 1);
 
-            // MODIFY
-            //TODO: WRITE TEST
-            //TODO: WRITE TEST
-            //TODO: WRITE TEST
-            //TODO: WRITE TEST
-            
-            // DELETE
-            changeTrackedflights.RemoveAll(f => f.row == 999);
+        ////    // MODIFY
+        ////    //TODO: WRITE TEST
+        ////    //TODO: WRITE TEST
+        ////    //TODO: WRITE TEST
+        ////    //TODO: WRITE TEST
 
-            var revertedChangeTrackedflights = Client.GetChangeTrackedFlights(options, changeTrackedflights);
-            Assert.IsNotNull(revertedChangeTrackedflights);
-            Assert.IsTrue(revertedChangeTrackedflights.Count == 21);
+        ////    // DELETE
+        ////    changeTrackedflights.RemoveAll(f => f.row == 999);
 
-            var Unchanged = revertedChangeTrackedflights.Count(f => f.State == Models.EntityState.Unchanged);
-            Assert.IsTrue(Unchanged == 20);
+        ////    var revertedChangeTrackedflights = Client.GetChangeTrackedFlights(options, changeTrackedflights);
+        ////    Assert.IsNotNull(revertedChangeTrackedflights);
+        ////    Assert.IsTrue(revertedChangeTrackedflights.Count == 21);
 
-            var deleted = revertedChangeTrackedflights.Count(f => f.State == Models.EntityState.Deleted);
-            Assert.IsTrue(deleted == 1);
+        ////    var Unchanged = revertedChangeTrackedflights.Count(f => f.State == Models.EntityState.Unchanged);
+        ////    Assert.IsTrue(Unchanged == 20);
 
-            // VALIDATE EMPTY ON CLEAN FETCH
-            var cleanflights = Client.GetFlights(options);
-            Assert.IsNotNull(cleanflights);
-            Assert.IsTrue(cleanflights.Count == 20);
-            var UnchangedCleanFlights = cleanflights.Count(f => f.State == Models.EntityState.Unchanged);
-            Assert.IsTrue(UnchangedCleanFlights == 20);
-        }
+        ////    var deleted = revertedChangeTrackedflights.Count(f => f.State == Models.EntityState.Deleted);
+        ////    Assert.IsTrue(deleted == 1);
 
+        ////    // VALIDATE EMPTY ON CLEAN FETCH
+        ////    var cleanflights = Client.GetFlights(options);
+        ////    Assert.IsNotNull(cleanflights);
+        ////    Assert.IsTrue(cleanflights.Count == 20);
+        ////    var UnchangedCleanFlights = cleanflights.Count(f => f.State == Models.EntityState.Unchanged);
+        ////    Assert.IsTrue(UnchangedCleanFlights == 20);
+        ////}
+
+        #endregion
     }
 }
 
