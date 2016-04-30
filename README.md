@@ -22,7 +22,7 @@ Results for current date are always fetched live and results from prior dates ar
 
 Please notice that Open Glider Network has requested low levels of requests to the Flightlog interface. The service has not been optimized for large batches. So please limit the live requests to e.g. 20 min intervals and if you request all historical information for a location put in some latency between each request to not stress the OGN flightlog service. 
 
-## Install with Nuget
+## Install with NuGet
 ```
 PM > Install-Package OGN.FlightLog.Client
 ```
