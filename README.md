@@ -3,9 +3,20 @@
 Gives a .net interface for getting the results from the OGN FlightLog
 http://live.glidernet.org/flightlog/index.php?a=EHDL&s=QFE&u=M&z=2&p=&d=30052015&j 
 
-## Database cache
+```c#
+var options = new Client.Options("EHDL", new DateTime(2015, 05, 30));
+var flights = Client.GetFlights(options);
+```
 
-Results from current date are fetched live and results from prior dates are fetched once and stored in local entity framework created database storage. 
+## Database cached
+
+Results for current date are always fetched live and results from prior dates are fetched once and stored in local entity framework created database storage. 
+
+```
+<connectionStrings>
+    <add name="OGN.FlightLog" connectionString="Data Source=(LocalDb)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\OGN.FlightLog.mdf;Integrated Security=True;MultipleActiveResultSets=True" providerName="System.Data.SqlClient"/>
+</connectionStrings>
+```
 
 ## Notice 
 
