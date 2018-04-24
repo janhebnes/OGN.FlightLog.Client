@@ -201,7 +201,7 @@
 
             WebClient client = new WebClient();
             string json = client.DownloadString(options.ToString());
-            if (json.StartsWith("<HTML>"))
+            if (json.Contains("<HTML><HEAD><TITLE>"))
             {
                 throw new InvalidAirportException("Unable to retrieve feed information for airport " + options.Airfield + " at " + options.ToString(), "Airfield");
             }

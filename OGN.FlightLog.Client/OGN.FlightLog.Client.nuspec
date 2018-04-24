@@ -9,9 +9,10 @@
     <projectUrl>https://github.com/janhebnes/OGN.FlightLog.Client</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>.Net Client for the OGN (Open Glider Network) FlightLog at http://live.glidernet.org/flightlog/</description>
-    <releaseNotes>v1.1 Downgraded to Framework 4.5
+    <releaseNotes>v1.2 Updated how InvalidAirportException is detected
+v1.1 Downgraded to Framework 4.5
 v1.0 First release with parsing of live request and basic local storage when using historical lookups on data</releaseNotes>
-    <copyright>Copyright 2016</copyright>
+    <copyright>Copyright 2018</copyright>
     <tags>OGN FlightLog</tags>
   </metadata>
 </package>
