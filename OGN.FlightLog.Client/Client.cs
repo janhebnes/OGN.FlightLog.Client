@@ -94,9 +94,17 @@
                 }
             }
 
+            /// <summary>
+            /// TimeZone Offset from UTC
+            /// </summary>
+            /// <remarks>Remember to handle summertime offset</remarks>
             public int TimeZone = 2;
             internal string TimeZoneParameter { get { return TimeZone.ToString(); } }
 
+            /// <summary>
+            /// WebClient timeout 
+            /// </summary>
+            public int Timeout = 5000;
         }
 
         public enum unit { meter, feet };
@@ -199,7 +207,7 @@
         {
             var result = new List<Flight>();
 
-            WebClient client = new WebClient();
+            WebClient client = new WebClientWithTimeout(options.Timeout);
             string json = client.DownloadString(options.ToString());
             if (json.Contains("<HTML><HEAD><TITLE>"))
             {
@@ -215,6 +223,23 @@
             result.AddRange(items);
 
             return result;
+        }
+
+        public class WebClientWithTimeout : WebClient
+        {
+            private int _timeout = 5000;
+
+            public WebClientWithTimeout(int timeout) : base()
+            {
+                _timeout = timeout;
+            }
+
+            protected override WebRequest GetWebRequest(Uri address)
+            {
+                WebRequest wr = base.GetWebRequest(address);
+                wr.Timeout = _timeout; // timeout in milliseconds (ms)
+                return wr;
+            }
         }
 
         #region sync feature is put on ice
