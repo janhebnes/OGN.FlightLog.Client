@@ -3,6 +3,8 @@ using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
+using static OGN.FlightLog.Client.Client;
 
 namespace OGN.FlightLog.Client.Tests
 {
@@ -18,48 +20,66 @@ namespace OGN.FlightLog.Client.Tests
         [TestMethod]
         public void StaticClientStoredRequest()
         {
-            var options = new Client.Options("EKKS", new DateTime(2018, 04, 21));
+            var options = new Client.Options("EKKS", new DateTime(2019, 04, 21));
             var flights = Client.GetFlights(options);
-            Assert.IsTrue(flights.Count == 42);
+            Assert.IsTrue(flights.Count == 36);
         }
 
         [TestMethod]
         public void StaticClientLiveRequest()
         {
-            var options = new Client.Options("EKKS", new DateTime(2018, 04, 21));
+            var options = new Client.Options("EKKS", new DateTime(2019, 04, 21));
             var flights = Client.GetFlights(options);
             Assert.IsNotNull(flights);
-            Assert.IsTrue(flights.Count == 42);
+            Assert.IsTrue(flights.Count == 36);
 
             flights = Client.GetFlights(options, false);
-            Assert.IsTrue(flights.Count == 42);
+            Assert.IsTrue(flights.Count == 36);
         }
 
         [TestMethod]
         public void InstanceClientLiveRequest()
         {
             var client = new Client("EKKS", 2);
-            var flights = client.GetFlights(new DateTime(2018, 04, 21));
+            var flights = client.GetFlights(new DateTime(2019, 04, 21));
             Assert.IsNotNull(flights);
-            Assert.IsTrue(flights.Count == 42);
+            Assert.IsTrue(flights.Count == 36);
 
-            flights = client.GetFlights(new DateTime(2018, 04, 21), false);
-            Assert.IsTrue(flights.Count == 42);
+            flights = client.GetFlights(new DateTime(2019, 04, 21), false);
+            Assert.IsTrue(flights.Count == 36);
         }
 
         [TestMethod]
-        public void StaticClientLiveInvalidAirportRequest()
+        public void BasicDownloadTest()
         {
-            try
+            var options = new Client.Options("EKKS", 2, new DateTime(2019, 04, 21));
+            System.Net.WebClient client = new Client.WebClientWithTimeout(options.Timeout);
+            var result = client.DownloadString(options.ToCsvDownloadAddress());
+
+            Assert.IsTrue(result.Contains("SUM_DALT,14846.2"));
+        }
+
+        [TestMethod]
+        public void BasicFlightParsingUsingSampleCsvTest()
+        {
+            var samplePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sample.csv");
+
+            Options options = new Options("EKKS", 2, new DateTime(2019, 4, 21));
+
+            var result = new List<Models.Flight>();
+            int row = 0;
+            foreach (string line in System.IO.File.ReadAllLines(samplePath)) 
             {
-                var options = new Client.Options("EKKX", new DateTime(2018, 04, 21));
-                var flights = Client.GetFlights(options, false);
-                Assert.Fail();
+                bool IsMetaDataFooterSection = line.StartsWith(string.Intern("BEGIN_DATE,") + options.DateParameter);
+                if (IsMetaDataFooterSection)
+                    break;
+
+                if (row++ == 0) continue;
+
+                result.Add(new Models.Flight(options, row++, line));
             }
-            catch (Client.InvalidAirportException iae)
-            {
-                Assert.IsNotNull(iae);
-            }
+
+            Assert.IsTrue(result.Count == 36);
         }
 
         #region sync feature is put on ice
