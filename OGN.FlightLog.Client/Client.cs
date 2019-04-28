@@ -138,7 +138,7 @@
             using (var db = new FlightLogContext())
             {
                 var datasetIdentifier = options.GetDatasetIdentifier();
-                var flights = db.Flights.Where(f => f.dataset == datasetIdentifier);
+                var flights = db.Logbook.Where(f => f.dataset == datasetIdentifier);
                 if (flights.Any())
                 {
                     if (flights.Any(ZeroFlightDayMarker)) 
@@ -153,7 +153,7 @@
                     result.Add(ZeroFlightDayMarker(options));
                 }
 
-                db.Flights.AddRange(result);
+                db.Logbook.AddRange(result);
                 db.SaveChanges();
                 return result;
             }

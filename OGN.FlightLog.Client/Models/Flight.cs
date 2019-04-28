@@ -1,9 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 
 namespace OGN.FlightLog.Client.Models
 {
+    [Table("logbook", Schema = "ktrax")]
     public class Flight
     {
         public static string Header = "DATE,SEQ_NR,ID,CALLSIGN,COMPETITION_NUMBER,TYPE,DETAILED_TYPE,CREW1,CREW2,TKOF_TIME,TKOF_AP,TKOF_RWY,RESERVED,LDG_TIME,LDG_AP,LDG_RWY,LDG_TURN,MAX_ALT,AVERAGE_CLIMB_RATE,FLIGHT_TIME,DAY_DIFFERENCE,LAUNCH_METHOD,INITIAL_CLIMBRATE,TOW_ID,TOW_CALLSIGN,TOW_COMPETITION_NUMBER,TOW_SEQUENCE_NUMBER";
@@ -46,8 +48,9 @@ namespace OGN.FlightLog.Client.Models
             // FLIGHT_TIME,DAY_DIFFERENCE,LAUNCH_METHOD,INITIAL_CLIMBRATE,TOW_ID,TOW_CALLSIGN,TOW_COMPETITION_NUMBER,TOW_SEQUENCE_NUMBER"
 
             string[] data = line.Split(',');
-            this.seq_nr = data[(int)Columns.SEQ_NR];
-            this.identifier = data[(int)Columns.ID];
+
+            this.seq_nr = Parse.Bigint(data[(int)Columns.SEQ_NR]); // 8-bit int 
+            this.identifier = data[(int)Columns.ID]; // flarm:xxx
             this.callsign = data[(int)Columns.CALLSIGN];
             this.competition_number = data[(int)Columns.COMPETITION_NUMBER];
             this.plane_type = data[(int)Columns.TYPE];
@@ -56,15 +59,15 @@ namespace OGN.FlightLog.Client.Models
             this.crew2 = data[(int)Columns.CREW2];
             this.tkof_time = Parse.DateTimeOffset(data[(int)Columns.TKOF_TIME], options.TimeZone);
             this.tkof_ap = data[(int)Columns.TKOF_AP];
-            this.tkof_rwy = Parse.Integer(data[(int)Columns.TKOF_RWY]);
+            this.tkof_rwy = Parse.Int(data[(int)Columns.TKOF_RWY]);
             this.ldg_time = Parse.DateTimeOffset(data[(int)Columns.LDG_TIME], options.TimeZone);
             this.ldg_ap = data[(int)Columns.LDG_AP];
-            this.ldg_rwy = Parse.Integer(data[(int)Columns.LDG_RWY]);
+            this.ldg_rwy = Parse.Int(data[(int)Columns.LDG_RWY]);
             this.ldg_turn = Parse.Decimal(data[(int)Columns.LDG_TURN]);
-            this.max_alt = Parse.Integer(data[(int)Columns.MAX_ALT]);
+            this.max_alt = Parse.Int(data[(int)Columns.MAX_ALT]);
             this.average_climb_rate = Parse.Decimal(data[(int)Columns.AVERAGE_CLIMB_RATE]);
             this.flight_time = Parse.TimeSpan(data[(int)Columns.FLIGHT_TIME]);
-            this.day_difference = Parse.Integer(data[(int)Columns.DAY_DIFFERENCE]);
+            this.day_difference = Parse.Int(data[(int)Columns.DAY_DIFFERENCE]);
             this.launch_method = data[(int)Columns.LAUNCH_METHOD];
             this.initial_climbrate = Parse.Decimal(data[(int)Columns.INITIAL_CLIMBRATE]);
             this.tow_identifier = data[(int)Columns.TOW_ID];
@@ -103,11 +106,12 @@ namespace OGN.FlightLog.Client.Models
                 if (string.IsNullOrWhiteSpace(value))
                     return null;
 
-                TimeSpan time;
-                if (!System.TimeSpan.TryParseExact(value, @"hh:mm", null, out time))
+                DateTime dt;
+                if (!DateTime.TryParseExact(value, "H:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
+                {
                     return null;
-
-                return time;
+                }
+                return dt.TimeOfDay;
             }
 
             internal static Decimal? Decimal(string value)
@@ -121,12 +125,23 @@ namespace OGN.FlightLog.Client.Models
                 return null;
             }
 
-            internal static int? Integer(string value)
+            internal static int? Int(string value)
             {
                 if (string.IsNullOrWhiteSpace(value))
                     return null;
 
                 if (int.TryParse(value, out int numeric))
+                    return numeric;
+
+                return null;
+            }
+
+            internal static Int64? Bigint(string value)
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    return null;
+
+                if (Int64.TryParse(value, out Int64 numeric))
                     return numeric;
 
                 return null;
@@ -145,33 +160,31 @@ namespace OGN.FlightLog.Client.Models
         public string unit { get; set; }
         public string timezone { get; set; }
 
-        private string seq_nr;
-
+        public Int64? seq_nr { get; set; }
         public string identifier { get; set; }
         public string callsign { get; set; }
-
-        private string competition_number;
-        private string plane_type;
-        private string detailed_plane_type;
-        private string crew1;
-        private string crew2;
-        private DateTimeOffset? tkof_time;
-        private string tkof_ap;
-        private int? tkof_rwy;
-        private DateTimeOffset? ldg_time;
-        private string ldg_ap;
-        private int? ldg_rwy;
-        private decimal? ldg_turn;
-        private int? max_alt;
-        private decimal? average_climb_rate;
-        private TimeSpan? flight_time;
-        private int? day_difference;
-        private string launch_method;
-        private decimal? initial_climbrate;
-        private string tow_identifier;
-        private string tow_callsign;
-        private string tow_competition_number;
-        private string tow_sequence_number;
+        public string competition_number { get; set; }
+        public string plane_type { get; set; }
+        public string detailed_plane_type { get; set; }
+        public string crew1 { get; set; }
+        public string crew2 { get; set; }
+        public DateTimeOffset? tkof_time { get; set; }
+        public string tkof_ap { get; set; }
+        public int? tkof_rwy { get; set; }
+        public DateTimeOffset? ldg_time { get; set; }
+        public string ldg_ap { get; set; }
+        public int? ldg_rwy { get; set; }
+        public decimal? ldg_turn { get; set; }
+        public int? max_alt { get; set; }
+        public decimal? average_climb_rate { get; set; }
+        public TimeSpan? flight_time { get; set; }
+        public int? day_difference { get; set; }
+        public string launch_method { get; set; }
+        public decimal? initial_climbrate { get; set; }
+        public string tow_identifier { get; set; }
+        public string tow_callsign { get; set; }
+        public string tow_competition_number { get; set; }
+        public string tow_sequence_number { get; set; }
 
         [System.ComponentModel.DataAnnotations.Schema.NotMapped]
         public EntityState State { get; set; }

@@ -68,7 +68,7 @@ namespace OGN.FlightLog.Client.Tests
 
             var result = new List<Models.Flight>();
             int row = 0;
-            foreach (string line in System.IO.File.ReadAllLines(samplePath)) 
+            foreach (string line in System.IO.File.ReadAllLines(samplePath))
             {
                 bool IsMetaDataFooterSection = line.StartsWith(string.Intern("BEGIN_DATE,") + options.DateParameter);
                 if (IsMetaDataFooterSection)
@@ -79,7 +79,77 @@ namespace OGN.FlightLog.Client.Tests
                 result.Add(new Models.Flight(options, row++, line));
             }
 
+            Assert.IsTrue(result[0].flight_time == new TimeSpan(0, 6, 0));
+            Assert.IsTrue(result[0].average_climb_rate == 9.22m);
             Assert.IsTrue(result.Count == 36);
+
+            var datasetIdentifier = options.GetDatasetIdentifier();
+            using (var db = new Models.FlightLogContext())
+            {
+                var flights = db.Logbook.Where(f => f.dataset == datasetIdentifier);
+                if (flights.Any())
+                {
+                    foreach (var flight in flights)
+                    {
+                        db.Logbook.Remove(flight);
+                    }
+                    db.SaveChanges();
+                    flights = db.Logbook.Where(f => f.dataset == datasetIdentifier);
+                }
+                if (!flights.Any())
+                {
+                    db.Logbook.AddRange(result);
+                    db.SaveChanges();
+                }
+            }
+
+            using (var db = new Models.FlightLogContext())
+            {
+                var flights = db.Logbook.Where(f => f.dataset == datasetIdentifier);
+                Assert.IsTrue(flights.Count() == 36);
+
+                var dbSpecificResult = flights.ToList().First(d => d.ID == result[0].ID);
+                Assert.IsTrue(dbSpecificResult.flight_time == new TimeSpan(0, 6, 0));
+                Assert.IsTrue(dbSpecificResult.average_climb_rate == 9.22m);
+                Assert.IsTrue(dbSpecificResult.flight_time == new TimeSpan(0, 6, 0));
+                
+                foreach (var dbResult in flights.ToList())
+                {
+                    var parseResult = result.First(r=>r.ID == dbResult.ID);
+                    // Complete validation of fields between database and parsed representation
+
+                    Assert.AreEqual(parseResult.timezone, dbResult.timezone);
+                    Assert.AreEqual(parseResult.airfield, dbResult.airfield);
+                    Assert.AreEqual(parseResult.unit, dbResult.unit);
+                    Assert.AreEqual(parseResult.Date, dbResult.Date);
+
+                    Assert.AreEqual(parseResult.identifier, dbResult.identifier);
+                    Assert.AreEqual(parseResult.callsign, dbResult.callsign);
+                    Assert.AreEqual(parseResult.competition_number, dbResult.competition_number);
+                    Assert.AreEqual(parseResult.plane_type, dbResult.plane_type);
+                    Assert.AreEqual(parseResult.detailed_plane_type, dbResult.detailed_plane_type);
+                    Assert.AreEqual(parseResult.crew1, dbResult.crew1);
+                    Assert.AreEqual(parseResult.crew2, dbResult.crew2);
+                    Assert.AreEqual(parseResult.tkof_time, dbResult.tkof_time);
+                    Assert.AreEqual(parseResult.tkof_ap, dbResult.tkof_ap);
+                    Assert.AreEqual(parseResult.tkof_rwy, dbResult.tkof_rwy);
+                    Assert.AreEqual(parseResult.ldg_time, dbResult.ldg_time);
+                    Assert.AreEqual(parseResult.ldg_ap, dbResult.ldg_ap);
+                    Assert.AreEqual(parseResult.ldg_rwy, dbResult.ldg_rwy);
+                    Assert.AreEqual(parseResult.ldg_turn, dbResult.ldg_turn);
+                    Assert.AreEqual(parseResult.max_alt, dbResult.max_alt);
+                    Assert.AreEqual(parseResult.average_climb_rate, dbResult.average_climb_rate);
+                    Assert.AreEqual(parseResult.flight_time, dbResult.flight_time);
+                    Assert.AreEqual(parseResult.day_difference, dbResult.day_difference);
+                    Assert.AreEqual(parseResult.launch_method, dbResult.launch_method);
+                    Assert.AreEqual(parseResult.initial_climbrate, dbResult.initial_climbrate);
+                    Assert.AreEqual(parseResult.tow_identifier, dbResult.tow_identifier);
+                    Assert.AreEqual(parseResult.tow_callsign, dbResult.tow_callsign);
+                    Assert.AreEqual(parseResult.tow_competition_number, dbResult.tow_competition_number);
+                    Assert.AreEqual(parseResult.tow_sequence_number, dbResult.tow_sequence_number);
+                    Assert.AreEqual(parseResult.seq_nr, dbResult.seq_nr);
+                }
+            }
         }
 
         #region sync feature is put on ice

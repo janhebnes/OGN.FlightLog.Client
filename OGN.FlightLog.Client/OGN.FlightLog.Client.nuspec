@@ -9,8 +9,11 @@
     <projectUrl>https://github.com/janhebnes/OGN.FlightLog.Client</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>.Net Client for the OGN (Open Glider Network) KTrax Logbook FlightLog at https://ktrax.kisstech.ch/logbook/ based on http://live.glidernet.org/</description>
-    <releaseNotes>v2.0 Updated to support KTrax Logbook CSV format
-v1.3 Option.timeout for controlling WebClient Timeout added 
+    <releaseNotes>v2.0.3 bugfix - changing main table name to ktrax.logbook to map source and give credit
+v2.0.2 bugfix - storing all fields and using native bigint type on seq nr
+v2.0.1 bugfix - now exposing the new flight fields as public and parses flight_time
+v2.0 Updated to support KTrax Logbook CSV format
+v1.3 Option.timeout for controlling WebClient Timeout added
 v1.2 Updated how InvalidAirportException is detected
 v1.1 Downgraded to Framework 4.5
 v1.0 First release with parsing of live request and basic local storage when using historical lookups on data</releaseNotes>
