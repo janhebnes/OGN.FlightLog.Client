@@ -141,7 +141,7 @@
             if (!useLocalDatabaseCache)
                 return GetLiveFlights(options);
 
-            //if (options.Date == DateTime.Now.Date)
+            if (options.Date == DateTime.Now.Date)
                 return GetLiveFlights(options); //GetChangeTrackedFlights(options, GetLiveFlights(options));
 
             using (var db = new FlightLogContext())
