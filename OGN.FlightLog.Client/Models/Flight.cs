@@ -2,16 +2,50 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
+using System.Linq;
+
+// ReSharper disable InconsistentNaming
 
 namespace OGN.FlightLog.Client.Models
 {
     [Table("logbook", Schema = "ktrax")]
     public class Flight
     {
-        public static string Header = "DATE,SEQ_NR,ID,CALLSIGN,COMPETITION_NUMBER,TYPE,DETAILED_TYPE,CREW1,CREW2,TKOF_TIME,TKOF_AP,TKOF_RWY,RESERVED,LDG_TIME,LDG_AP,LDG_RWY,LDG_TURN,MAX_ALT,AVERAGE_CLIMB_RATE,FLIGHT_TIME,DAY_DIFFERENCE,LAUNCH_METHOD,INITIAL_CLIMBRATE,TOW_ID,TOW_CALLSIGN,TOW_COMPETITION_NUMBER,TOW_SEQUENCE_NUMBER";
+        public static string Header = "DATE,SEQ_NR,ID,CALLSIGN,COMPETITION_NUMBER,TYPE,DETAILED_TYPE,CREW1_NAME,CREW1_NR,RESERVED_1,CREW2_NAME,CREW2_NR,RESERVED_2,TKOF_TIME,TKOF_AP,TKOF_RWY,RESERVED_3,LDG_TIME,LDG_AP,LDG_RWY,LDG_TURN,MAX_ALT,VERTICAL_SPEED,INITIAL_CLIMBRATE,AVERAGE_CLIMB_RATE,FLIGHT_TIME,DAY_DIFFERENCE,LAUNCH_METHOD,TOW_ID,TOW_CALLSIGN,TOW_COMPETITION_NUMBER,TOW_SEQUENCE_NUMBER";
         public enum Columns
         {
-            DATE,SEQ_NR,ID,CALLSIGN,COMPETITION_NUMBER,TYPE,DETAILED_TYPE,CREW1,CREW2,TKOF_TIME,TKOF_AP,TKOF_RWY,RESERVED,LDG_TIME,LDG_AP,LDG_RWY,LDG_TURN,MAX_ALT,AVERAGE_CLIMB_RATE,FLIGHT_TIME,DAY_DIFFERENCE,LAUNCH_METHOD,INITIAL_CLIMBRATE,TOW_ID,TOW_CALLSIGN,TOW_COMPETITION_NUMBER,TOW_SEQUENCE_NUMBER
+            //DATE = 0, //2021-04-27
+            SEQ_NR = 1, //161952234701
+            ID = 2, //flarm:DDDC94
+            CALLSIGN = 3, //OY-XMD
+            COMPETITION_NUMBER = 4, //MD
+            TYPE = 5, //1
+            DETAILED_TYPE = 6, //LS-4
+            //CREW1_NAME = 7,
+            CREW1_NR = 8,
+            //RESERVED_1 = 9,
+            //CREW2_NAME = 10,
+            CREW2_NR = 11,
+            //RESERVED_2 = 12,
+            TKOF_TIME = 13, //13:19:01
+            TKOF_AP = 14, //EKAS
+            TKOF_RWY = 15, //29
+            //RESERVED_3 = 16, //0
+            LDG_TIME = 17, //13:23:38
+            LDG_AP = 18, //EKAS
+            LDG_RWY = 19, //27
+            LDG_TURN = 20, //1.6
+            MAX_ALT = 21, //270
+            //VERTICAL_SPEED = 22, //0
+            INITIAL_CLIMBRATE = 23, //11.7043
+            AVERAGE_CLIMB_RATE = 24, //9.79
+            FLIGHT_TIME = 25, //0:04:37
+            DAY_DIFFERENCE = 26, //0
+            LAUNCH_METHOD = 27, //W
+            TOW_ID = 28,
+            TOW_CALLSIGN = 29,
+            TOW_COMPETITION_NUMBER = 30,
+            TOW_SEQUENCE_NUMBER = 31
         }
 
         public Flight()
@@ -41,13 +75,10 @@ namespace OGN.FlightLog.Client.Models
 
         public Flight(Client.Options options, int row, string line) : this(options, row)
         {
-            //"DATE,SEQ_NR,ID,CALLSIGN,COMPETITION_NUMBER,TYPE,
-            // DETAILED_TYPE,CREW1,CREW2,TKOF_TIME,TKOF_AP,TKOF_RWY,RESERVED,
-            // LDG_TIME,LDG_AP,LDG_RWY,LDG_TURN,
-            // MAX_ALT,AVERAGE_CLIMB_RATE,
-            // FLIGHT_TIME,DAY_DIFFERENCE,LAUNCH_METHOD,INITIAL_CLIMBRATE,TOW_ID,TOW_CALLSIGN,TOW_COMPETITION_NUMBER,TOW_SEQUENCE_NUMBER"
-
             string[] data = line.Split(',');
+
+            if (data.Length < (int) (Columns.TOW_SEQUENCE_NUMBER + 1))
+                return;
 
             this.seq_nr = Parse.Bigint(data[(int)Columns.SEQ_NR]); // 8-bit int 
             this.identifier = data[(int)Columns.ID]; // flarm:xxx
@@ -55,8 +86,8 @@ namespace OGN.FlightLog.Client.Models
             this.competition_number = data[(int)Columns.COMPETITION_NUMBER];
             this.plane_type = data[(int)Columns.TYPE];
             this.detailed_plane_type = data[(int)Columns.DETAILED_TYPE];
-            this.crew1 = data[(int)Columns.CREW1];
-            this.crew2 = data[(int)Columns.CREW2];
+            this.crew1 = data[(int)Columns.CREW1_NR];
+            this.crew2 = data[(int)Columns.CREW2_NR];
             this.tkof_time = Parse.DateTimeOffset(data[(int)Columns.TKOF_TIME], options.TimeZone);
             this.tkof_ap = data[(int)Columns.TKOF_AP];
             this.tkof_rwy = Parse.Int(data[(int)Columns.TKOF_RWY]);
@@ -89,9 +120,18 @@ namespace OGN.FlightLog.Client.Models
                 if (string.IsNullOrWhiteSpace(value))
                     return null;
 
-                TimeSpan time;
-                if (!System.TimeSpan.TryParse(value, out time))
-                    return null;
+                if (!System.TimeSpan.TryParse(value, out var time))
+                {
+                    if (!value.EndsWith("XX"))
+                        return null;
+
+                    var first = value.Split(':').First();
+                    
+                    if (!int.TryParse(first, out var hour))
+                        return null;
+
+                    return new DateTimeOffset(new TimeSpan(hour, 0, 0).Ticks, new TimeSpan(timeZone, 0, 0));
+                }
 
                 return new DateTimeOffset(time.Ticks, new TimeSpan(timeZone, 0, 0));
             }
@@ -106,10 +146,17 @@ namespace OGN.FlightLog.Client.Models
                 if (string.IsNullOrWhiteSpace(value))
                     return null;
 
-                DateTime dt;
-                if (!DateTime.TryParseExact(value, "H:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
+                if (!DateTime.TryParseExact(value, "H:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt))
                 {
-                    return null;
+                    if (!value.EndsWith("XX"))
+                        return null;
+                    
+                    var first = value.Split(':').First();
+
+                    if (!int.TryParse(first, out var hour))
+                        return null;
+                    
+                    return new TimeSpan(hour, 0, 0);
                 }
                 return dt.TimeOfDay;
             }
@@ -188,5 +235,7 @@ namespace OGN.FlightLog.Client.Models
 
         [System.ComponentModel.DataAnnotations.Schema.NotMapped]
         public EntityState State { get; set; }
+
+        public override string ToString() => $"{callsign} {tkof_time:HH\\:mm} {flight_time:hh\\:mm}";
     }
 }
