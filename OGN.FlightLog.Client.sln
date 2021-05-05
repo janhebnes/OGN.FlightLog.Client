@@ -1,11 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31112.23
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OGN.FlightLog.Client", "OGN.FlightLog.Client\OGN.FlightLog.Client.csproj", "{CFFA9532-DB5C-4A17-AC89-8F80628A1268}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OGN.FlightLog.Client.Tests", "OGN.FlightLog.Client.Test\OGN.FlightLog.Client.Tests.csproj", "{6B6DFAFB-1E20-4313-A621-0D54A315CE77}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nuget", "nuget", "{4693B8C7-E010-4884-A8CF-F63804F66D2A}"
+	ProjectSection(SolutionItems) = preProject
+		OGN.FlightLog.Client\NuGet-Pack.cmd = OGN.FlightLog.Client\NuGet-Pack.cmd
+		OGN.FlightLog.Client\OGN.FlightLog.Client.nuspec = OGN.FlightLog.Client\OGN.FlightLog.Client.nuspec
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +30,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4DFD5260-2A06-430D-B647-3129A459C315}
 	EndGlobalSection
 EndGlobal
