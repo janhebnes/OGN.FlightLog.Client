@@ -46,7 +46,16 @@
             /// <returns></returns>
             public string ToCsvDownloadAddress()
             {
-                return $"https://ktrax.kisstech.ch/cgi-bin/ktrax.cgi?db=sortie_csv&id={AirfieldParameter}&dbeg={DateParameter}&dend={DateParameter}&query_type=any&tz={TimeZoneParameter}";
+                return   $"https://ktrax.kisstech.ch/backend/logbook/?csv=1&id={AirfieldParameter}&dbeg={DateParameter}&dend={DateParameter}&tz=2";
+            }
+
+            /// <summary>
+            /// Returns the JSON Address
+            /// </summary>
+            /// <returns></returns>
+            public string ToJsonAddress()
+            {
+                return $"https://ktrax.kisstech.ch/backend/logbook/?id={AirfieldParameter}&tz={TimeZoneParameter}&dbeg={DateParameter}&dend={DateParameter}&db=sortie&query_type=ap";
             }
 
             /// <summary>
