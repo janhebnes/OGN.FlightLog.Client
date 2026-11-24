@@ -1,4 +1,9 @@
-# OGN.FlightLog.Client &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](../LICENSE)
+# OGN.FlightLog.Client &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](../LICENSE) ![status: deprecated](https://img.shields.io/badge/status-deprecated-red.svg)
+
+> [!WARNING]
+> **Deprecated and archived.** The KTrax logbook service that this client wrapped is no longer available, so this package no longer works and is no longer maintained.
+>
+> Existing versions remain on NuGet (deprecated and unlisted), so builds that reference an exact version can still restore. Please remove the package from your projects.
 
 Gives a .net interface for getting the results from the OGN (Open Glider Network) KTrax Logbook FlightLog 
 at https://ktrax.kisstech.ch/logbook/ based on http://live.glidernet.org/
@@ -10,9 +15,9 @@ var flights = Client.GetFlights(options);
 ```
 
 ## Install
-```
-PM > Install-Package OGN.FlightLog.Client
-```
+
+Not recommended: the package is deprecated and unlisted on NuGet.
+
 https://www.nuget.org/packages/OGN.FlightLog.Client
 
 ## Cached
