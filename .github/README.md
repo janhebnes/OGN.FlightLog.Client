@@ -1,7 +1,7 @@
 # OGN.FlightLog.Client &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](../LICENSE) ![status: deprecated](https://img.shields.io/badge/status-deprecated-red.svg)
 
 > [!WARNING]
-> **Deprecated and archived.** The KTrax logbook service that this client wrapped is no longer available, so this package no longer works and is no longer maintained.
+> **Deprecated and archived.** This package is no longer maintained - KTrax logbook service is still in service.
 >
 > Existing versions remain on NuGet (deprecated and unlisted), so builds that reference an exact version can still restore. Please remove the package from your projects.
 
